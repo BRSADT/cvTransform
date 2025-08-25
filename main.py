@@ -78,17 +78,24 @@ def render_txt(cv: CvStruct) -> str:
 SYS_PROMPT = (
 "Devuelve SOLO un JSON con claves: header, resumen, experiencia, educacion, skills. "
 "Cada valor debe ser STRING y usar \\n para saltos. NO INVENTES: solo texto que aparezca literalmente en el CV.\n"
+"- (Inferencia de secciones): detecta cada sección aunque el CV use sinónimos/títulos distintos: "
+"  Resumen↔Perfil/About/Summary, Experiencia↔Experience/Trayectoria/Laboral, "
+"  Educación↔Formación/Education/Estudios, Skills↔Habilidades/Competencias.\n"
 "- header: 'Nombre — Rol' si el rol aparece; luego solo si existen (una por línea): Email:, LinkedIn:, Web:, Tel:, Ubicación:.\n"
 "- resumen: copia si existe; si no, \"\".\n"
 "- experiencia: texto plano; conserva viñetas ('- ' o '•').\n"
 "- educacion: una entrada por línea; si hay grado/institución/año juntos o contiguos, usa 'Grado — Institución (Año)'; sin comas finales.\n"
-"- skills: si hay habilidades en el CV, devuelve EXACTAMENTE:\n"
+"- skills: INCLUYE solo si existe una sección explícita de Skills/Habilidades/Competencias (no extraigas desde Experiencia ni Educación). "
+"  Si hay habilidades en el CV, devuelve EXACTAMENTE: "
 "  'Skills\\n------\\n' + ('Hard skills: a, b, c\\n' si hay hard) + ('Soft skills: x, y, z' si hay soft). "
 "  Las listas SOLO con términos que aparezcan en el CV, sin duplicados (case-insensitive), separados por coma+espacio, sin coma/punto final. "
-"  Si NO hay ninguna habilidad encontrada, pon skills=\"\". NUNCA repitas 'Skills\\n------'.\n"
+"  Si NO hay ninguna habilidad encontrada o no existe la sección explícita, pon skills=\"\". NUNCA repitas 'Skills\\n------'.\n"
 "Normaliza comas/espacios: 1 espacio tras cada coma; ninguna coma antes de ')'. "
 "Salida: SOLO el objeto JSON válido, sin Markdown ni comentarios."
 )
+
+
+
 
 USER_WRAP = lambda body: f"---CV---\n{body}\n---FIN---"
 
